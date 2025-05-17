@@ -1,20 +1,25 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
-const app = express();
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+
 const port = process.env.PORT || 5000;
 
+// Middleware
+const corsOptions = {
+    origin: ["http://localhost:5173"],
+    credentials: true,
+    optionsSuccessStatus: 200, // fixed typo from "operationSuccessStatus"
+};
 
-
-// middleware
-app.use(cors());
+const app = express();
 app.use(express.json());
+app.use(cors(corsOptions));
 
-
+// MongoDB connection URI
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.uru7rsz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -22,35 +27,29 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     }
 });
-
 async function run() {
     try {
-        // Connect the client to the server	(optional starting in v4.7)
+
         await client.connect();
-        // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+        const biodataCreatedCardCollection = client.db('e-matrimony').collection('biodataCreatedCard');
+
+
+        app.get('/biodataCreatedCard', async (req, res) => {
+            const result = await biodataCreatedCardCollection.find().toArray();
+            res.send(result);
+
+        });
+
+    } catch (err) {
+        console.error("MongoDB connection error:", err);
     }
 }
 run().catch(console.dir);
 
-
-
-
-
-
-
-
-
-
-
 app.get('/', (req, res) => {
-    res.send('Matrimony server is running')
-})
+    res.send('E-Matrimony server is running');
+});
 
 app.listen(port, () => {
-    console.log(`Matrimony server is running on port: ${port}`);
-})
+    console.log(`E-Matrimony is running on port: ${port}`);
+});
