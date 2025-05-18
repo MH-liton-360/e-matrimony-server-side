@@ -69,8 +69,6 @@ async function run() {
         });
 
 
-
-
         // POST new biodata
         app.post('/api/biodata', async (req, res) => {
             try {
