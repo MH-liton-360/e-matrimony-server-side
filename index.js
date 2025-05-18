@@ -28,7 +28,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        await client.connect();
+        //await client.connect();
         const biodataCreatedCardCollection = client.db('e-matrimony').collection('biodataCreatedCard');
 
         // GET all biodata
