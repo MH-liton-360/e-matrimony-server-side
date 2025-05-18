@@ -30,12 +30,52 @@ async function run() {
     try {
         //await client.connect();
         const biodataCreatedCardCollection = client.db('e-matrimony').collection('biodataCreatedCard');
+        const usersCollection = client.db('e-matrimony').collection('users');
+
 
         // GET all biodata
         app.get('/biodataCreatedCard', async (req, res) => {
             const result = await biodataCreatedCardCollection.find().toArray();
             res.send(result);
         });
+
+
+        // Get users with optional search
+        app.get('/dashboard/manage-users', async (req, res) => {
+            const search = req.query.search || "";
+            const query = {
+                name: { $regex: search, $options: "i" }, // case-insensitive partial match
+                isRequestedPremium: true // Only users who requested premium
+            };
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
+        });
+
+        // Make admin
+        app.patch('/dashboard/make-admin/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await usersCollection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { role: "admin" } }
+            );
+            res.send(result);
+        });
+
+        // Make premium
+        app.patch('/dashboard/make-premium/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await usersCollection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { isPremium: true, isRequestedPremium: false } }
+            );
+            res.send(result);
+        });
+
+
+
+
+
+
 
 
         //Admin
