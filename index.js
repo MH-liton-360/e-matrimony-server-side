@@ -155,12 +155,12 @@ async function run() {
 }
 run().catch(console.dir);
 
-// Base route
+// Base route setup
 app.get('/', (req, res) => {
     res.send('E-Matrimony server is running');
 });
 
-// Start server
+// Start server setup
 app.listen(port, () => {
     console.log(`E-Matrimony server is running on port: ${port}`);
 });
