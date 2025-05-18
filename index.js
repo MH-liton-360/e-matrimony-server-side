@@ -109,7 +109,7 @@ async function run() {
         });
 
 
-        // POST new biodata
+        // POST new biodata setup
         app.post('/api/biodata', async (req, res) => {
             try {
                 const data = req.body;
